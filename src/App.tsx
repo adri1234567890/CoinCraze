@@ -39,7 +39,6 @@ const App = () => {
 
   // Add loading state management
   const [isPriceFetching, setIsPriceFetching] = useState(false);
-  const [priceError, setPriceError] = useState<string | null>(null);
   const [lastSuccessfulPrice, setLastSuccessfulPrice] = useState<number | null>(() => {
     const saved = localStorage.getItem('lastSuccessfulPrice');
     return saved ? parseFloat(saved) : null;
@@ -51,7 +50,6 @@ const App = () => {
     
     try {
       setIsPriceFetching(true);
-      setPriceError(null);
       
       // Try multiple API endpoints in case one fails
       const endpoints = [
@@ -103,13 +101,11 @@ const App = () => {
         setLastSuccessfulPrice(price);
         localStorage.setItem('lastSuccessfulPrice', price.toString());
         localStorage.setItem('lastPriceUpdateTime', Date.now().toString());
-        setPriceError(null);
       } else {
         throw new Error(error?.message || 'Failed to fetch price from all endpoints');
       }
     } catch (error: any) {
       console.error('Error fetching Solana price:', error);
-      setPriceError(error?.message || 'Failed to fetch price');
       
       // Use fallback prices in this order:
       // 1. Last successful price from current session

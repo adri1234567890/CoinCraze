@@ -4,19 +4,18 @@ import { CurrencyDollarIcon, ArrowTrendingUpIcon, ArrowTrendingDownIcon } from '
 interface WalletProps {
   balance: number;
   investedAmount: number;
-  ownedSolana?: number;
-  solanaPrice?: number;
-  initialInvestedPrice?: number;
+  ownedSolana: number;
+  solanaPrice: number;
+  initialInvestedPrice: number;
 }
 
 const Wallet: React.FC<WalletProps> = ({ 
   balance, 
   investedAmount,
-  ownedSolana = 0,
-  solanaPrice = 0,
-  initialInvestedPrice = 0
+  ownedSolana,
+  solanaPrice,
+  initialInvestedPrice
 }) => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [lastValidPrice, setLastValidPrice] = useState<number>(solanaPrice || initialInvestedPrice || 0);
 
   // Update lastValidPrice when we receive a valid solanaPrice

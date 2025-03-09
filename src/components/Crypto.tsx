@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { CurrencyDollarIcon } from '@heroicons/react/24/solid';
+import React, { useEffect, useState, useRef } from 'react';
+import { CurrencyDollarIcon, ArrowLeftIcon } from '@heroicons/react/24/solid';
 import Decimal from 'decimal.js';
 
-// Add TradingView Widget interface
+// Define TradingView types
 declare global {
   interface Window {
     TradingView: {
@@ -37,32 +37,32 @@ class AMM {
   }
 
   buyTokens(ethAmount: number): { tokens: number; newPrice: number } {
-    const ethIn = new Decimal(ethAmount);
-    const newEthLiquidity = this.ethLiquidity.add(ethIn);
+    const ethAmountDecimal = new Decimal(ethAmount);
+    const newEthLiquidity = this.ethLiquidity.add(ethAmountDecimal);
     const newTokenLiquidity = this.k.div(newEthLiquidity);
-    const tokensOut = this.tokenLiquidity.sub(newTokenLiquidity);
+    const tokensReceived = this.tokenLiquidity.sub(newTokenLiquidity);
     
     this.ethLiquidity = newEthLiquidity;
     this.tokenLiquidity = newTokenLiquidity;
     
     return {
-      tokens: tokensOut.toNumber(),
-      newPrice: this.getTokenPrice(),
+      tokens: tokensReceived.toNumber(),
+      newPrice: this.getTokenPrice()
     };
   }
 
   sellTokens(tokenAmount: number): { eth: number; newPrice: number } {
-    const tokensIn = new Decimal(tokenAmount);
-    const newTokenLiquidity = this.tokenLiquidity.add(tokensIn);
+    const tokenAmountDecimal = new Decimal(tokenAmount);
+    const newTokenLiquidity = this.tokenLiquidity.add(tokenAmountDecimal);
     const newEthLiquidity = this.k.div(newTokenLiquidity);
-    const ethOut = this.ethLiquidity.sub(newEthLiquidity);
+    const ethReceived = this.ethLiquidity.sub(newEthLiquidity);
     
     this.ethLiquidity = newEthLiquidity;
     this.tokenLiquidity = newTokenLiquidity;
     
     return {
-      eth: ethOut.toNumber(),
-      newPrice: this.getTokenPrice(),
+      eth: ethReceived.toNumber(),
+      newPrice: this.getTokenPrice()
     };
   }
 }
@@ -112,7 +112,6 @@ const SolanaView: React.FC<CoinViewProps> = ({
   initialOwnedSolana,
   setInitialInvestedPrice
 }) => {
-  const [amm] = useState<AMM>(new AMM(1000000000, 3500));
   const [amount, setAmount] = useState('');
   const [sellPercentage, setSellPercentage] = useState(0);
   const [isSelling, setIsSelling] = useState(false);

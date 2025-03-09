@@ -8,4 +8,12 @@ export default defineConfig({
     host: true,
     strictPort: true,
   },
+  build: {
+    rollupOptions: {
+      onwarn(warning, warn) {
+        if (warning.code === 'UNUSED_EXTERNAL_IMPORT') return;
+        warn(warning);
+      }
+    }
+  }
 }) 
