@@ -233,6 +233,10 @@ const App = () => {
       .slice(0, 5);
   }, [posts]);
 
+  useEffect(() => {
+    console.log('App mounted');
+  }, []);
+
   return (
     <Router>
       <div className="min-h-screen w-full bg-black">
@@ -250,16 +254,19 @@ const App = () => {
               <Route 
                 path="/" 
                 element={
-                  <Feed 
-                    posts={posts} 
-                    setPosts={setPosts} 
-                    currentUser={username}
-                    isVerified={isVerified}
-                    profilePicture={profilePicture}
-                    balance={balance}
-                    ownedSolana={ownedSolana}
-                    solanaPrice={solanaPrice}
-                  />
+                  <>
+                    <div style={{color: 'white'}}>Debug: Home Route</div>
+                    <Feed 
+                      posts={posts} 
+                      setPosts={setPosts} 
+                      currentUser={username}
+                      isVerified={isVerified}
+                      profilePicture={profilePicture}
+                      balance={balance}
+                      ownedSolana={ownedSolana}
+                      solanaPrice={solanaPrice}
+                    />
+                  </>
                 } 
               />
               <Route 
@@ -307,6 +314,14 @@ const App = () => {
                     initialInvestedPrice={initialInvestedPrice}
                   />
                 } 
+              />
+              <Route 
+                path="*" 
+                element={
+                  <div style={{color: 'white', padding: '20px'}}>
+                    404 - Page not found
+                  </div>
+                }
               />
             </Routes>
           </div>
