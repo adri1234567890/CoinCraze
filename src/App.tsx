@@ -7,10 +7,11 @@ import Crypto from './components/Crypto';
 import Wallet from './components/Wallet';
 import { Post } from './types/post';
 import { loadFromLocalStorage, saveToLocalStorage } from './utils/localStorage';
+import { api } from './utils/api';
 
 const App = () => {
   // Initialize states with localStorage values
-  const [posts, setPosts] = useState<Post[]>(() => loadFromLocalStorage.posts());
+  const [posts, setPosts] = useState<Post[]>([]);
   const [isVerified, setIsVerified] = useState(() => loadFromLocalStorage.isVerified());
   const [profilePicture, setProfilePicture] = useState<string | null>(() => loadFromLocalStorage.profilePicture());
   const [username, setUsername] = useState(() => loadFromLocalStorage.username());
@@ -226,6 +227,19 @@ const App = () => {
     saveToLocalStorage.balance(balance);
   }, [balance]);
 
+  // Set up post syncing
+  useEffect(() => {
+    const syncInterval = api.startSync(setPosts);
+    return () => clearInterval(syncInterval);
+  }, []);
+
+  // Update posts in the API when they change
+  useEffect(() => {
+    if (posts.length > 0) {
+      api.savePosts(posts);
+    }
+  }, [posts]);
+
   const trendingPosts = useMemo(() => {
     return posts
       .filter(post => post.likes >= 5)
@@ -254,19 +268,16 @@ const App = () => {
               <Route 
                 path="/" 
                 element={
-                  <>
-                    <div style={{color: 'white'}}>Debug: Home Route</div>
-                    <Feed 
-                      posts={posts} 
-                      setPosts={setPosts} 
-                      currentUser={username}
-                      isVerified={isVerified}
-                      profilePicture={profilePicture}
-                      balance={balance}
-                      ownedSolana={ownedSolana}
-                      solanaPrice={solanaPrice}
-                    />
-                  </>
+                  <Feed 
+                    posts={posts} 
+                    setPosts={setPosts} 
+                    currentUser={username}
+                    isVerified={isVerified}
+                    profilePicture={profilePicture}
+                    balance={balance}
+                    ownedSolana={ownedSolana}
+                    solanaPrice={solanaPrice}
+                  />
                 } 
               />
               <Route 
