@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Feed from './components/Feed';
 import Profile from './components/Profile';
